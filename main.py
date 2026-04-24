@@ -6,11 +6,6 @@ from pydantic import BaseModel
 from typing import List
 from groq import Groq
 
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-
-@app.post("/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest):
-    
 app = FastAPI(title="Tutor IA - Lógica de Programação")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -54,6 +49,7 @@ async def chat(req: ChatRequest):
     if not req.messages:
         raise HTTPException(status_code=400, detail="Nenhuma mensagem enviada.")
     try:
+        client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         for m in req.messages:
