@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Tutor IA de Programação</title>
+<title>Tutor IA — Lógica de Programação</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
@@ -388,7 +388,7 @@
     <h1>Tutor IA</h1>
     <p>Lógica de Programação · IEEE CS</p>
   </div>
-  <div class="badge">⚡ Aurélio - Cecilia - Elton - Felipe - Paulo - Samuel </div>
+  <div class="badge">⚡ Powered by Claude</div>
 </header>
 
 <div class="container">
@@ -431,7 +431,7 @@
     <div id="messages">
       <div class="welcome" id="welcome">
         <div class="big-icon">🧠</div>
-        <h2>Olá! Sou seu Tutor de Programação</h2>
+        <h2>Olá! Sou seu Tutor de Lógica</h2>
         <p>Cole seu código, faça uma pergunta ou escolha um tópico ao lado.<br/>Vou te guiar no aprendizado — sem entregar a resposta de graça!</p>
         <div class="welcome-tips">
           <div class="tip-chip" onclick="sendTopic('Olá! Por onde devo começar a aprender lógica de programação?')">👋 Por onde começar</div>
@@ -464,6 +464,7 @@
   const welcomeEl  = document.getElementById('welcome');
 
   let history = [];  // {role, content}[]
+  let sessionId = null;  // ID da sessão persistida no banco
 
   marked.setOptions({ breaks: true });
 
@@ -478,6 +479,7 @@
 
   function clearChat() {
     history = [];
+    sessionId = null;
     messagesEl.innerHTML = '';
     messagesEl.appendChild(welcomeEl);
     welcomeEl.style.display = 'flex';
@@ -551,7 +553,7 @@
       const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: history, session_id: sessionId }),
       });
 
       removeTyping();
@@ -561,6 +563,7 @@
         appendErrorMsg(err.detail || 'Erro desconhecido.');
       } else {
         const data = await res.json();
+        sessionId = data.session_id;  // guarda o session_id retornado
         appendMsg('bot', data.reply);
         history.push({ role: 'assistant', content: data.reply });
       }
