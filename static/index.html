@@ -483,6 +483,7 @@
   function clearChat() {
     history = [];
     sessionId = null;
+    document.getElementById('sessionDisplay').textContent = 'Nova';
     messagesEl.innerHTML = '';
     messagesEl.appendChild(welcomeEl);
     welcomeEl.style.display = 'flex';
@@ -566,7 +567,8 @@
         appendErrorMsg(err.detail || 'Erro desconhecido.');
       } else {
         const data = await res.json();
-        sessionId = data.session_id;  // guarda o session_id retornado
+        sessionId = data.session_id;
+        document.getElementById('sessionDisplay').textContent = sessionId;
         appendMsg('bot', data.reply);
         history.push({ role: 'assistant', content: data.reply });
       }
